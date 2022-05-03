@@ -1,9 +1,9 @@
 class ShoppingCart {
     constructor(){
         if(localStorage.getItem("shoppingCart") === null) {
-            this.shoppingCart = [];
+            this.cart = [];
         }else {
-            this.shoppingCart = JSON.parse(localStorage.getItem("shoppingCart"));
+            this.cart = JSON.parse(localStorage.getItem("shoppingCart"));
         } 
     }
 
@@ -12,27 +12,27 @@ class ShoppingCart {
     }
 
     add (item) {
-        if (this.shoppingCart.length === 0) {
-            this.shoppingCart.push(item);
-            this.save(this.shoppingCart);
+        if (this.cart.length === 0) {
+            this.cart.push(item);
+            this.save(this.cart);
         }else {
-            const isSameId = this.shoppingCart.some( element => element.id === item.id );
-            const isSameColor = this.shoppingCart.some( element => element.id === item.id && element.color === item.color );
+            const isSameId = this.cart.some( element => element.id === item.id );
+            const isSameColor = this.cart.some( element => element.id === item.id && element.color === item.color );
             
             if (!isSameId ) {
-                this.shoppingCart.push(item);
-                this.save(this.shoppingCart);
+                this.cart.push(item);
+                this.save(this.cart);
             } 
     
             if (isSameId && !isSameColor) {
-                this.shoppingCart.push(item);
-                this.save(this.shoppingCart);
+                this.cart.push(item);
+                this.save(this.cart);
             }
     
             if (isSameId && isSameColor) {
-                const newShoppingCart = this.shoppingCart.map( element => {
+                const newShoppingCart = this.cart.map( element => {
                     if (element.id === item.id && element.color === item.color) {
-                        return {...element,quantity:+ element.quantity + + item.quantity}
+                        return {...element,quantity: element.quantity + item.quantity}
                     }
                     return element;
                 })
@@ -41,6 +41,17 @@ class ShoppingCart {
     
         }
         
+    }
+
+    update(id,color,quantity){
+        const newShoppingCart = this.cart.map( (element) => {
+            if(element.id === id && element.color === color) {
+                return {...element,quantity:quantity}
+            }else {
+                return element;
+            }
+        })
+        this.save(newShoppingCart); 
     }
 
 }
