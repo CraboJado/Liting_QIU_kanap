@@ -6,19 +6,25 @@ const itemsContainer = document.querySelector("#items");
 fetch('http://localhost:3000/api/products')
 .then( response => response.json() )
 .then(data => {
-    data.map( element => {
 
-        itemsContainer.innerHTML +=`
-        <a href="./product.html?id=${element._id}">
+  let listItems ="";
+
+    data.forEach( item => {
+      listItems +=`
+      <a href="./product.html?id=${item._id}">
         <article>
-          <img src="${element.imageUrl}" alt="Lorem ipsum dolor sit amet, Kanap name1">
-          <h3 class="productName">${element.name}</h3>
-          <p class="productDescription">${element.description}</p>
+          <img src="${item.imageUrl}" alt="Lorem ipsum dolor sit amet, Kanap name1">
+          <h3 class="productName">${item.name}</h3>
+          <p class="productDescription">${item.description}</p>
         </article>
-      </a>
-      `
+      </a>`;
 
     } )
+
+    itemsContainer.innerHTML = listItems;
+
+    localStorage.setItem("productData",JSON.stringify(data));
+
 }).catch((error) => {
   console.error('Error:', error); // question : comment traiter l'error ?
 });
