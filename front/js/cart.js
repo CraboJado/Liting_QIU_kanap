@@ -1,30 +1,35 @@
 const cartItems = document.querySelector('#cart__items'); 
+const totalQuantity = document.querySelector('#totalQuantity');
+const totalPrice = document.querySelector('#totalPrice');
+
 const productData = JSON.parse(localStorage.getItem("productData"));
-// const shoppingCart = JSON.parse(localStorage.getItem("shoppingCart"));
-
-
 let shoppingCart = new ShoppingCart();
-let articleString ="";
-shoppingCart.cart.forEach( (item) => {
-    const selectProduct = productData.find( (product)=> {
-        return product._id === item.id
-    })
 
+console.log(shoppingCart.cart);
+
+// first rendering page by using the datas in LocalStorage
+let articleString ="";
+let sum = shoppingCart.getTotalPrice(productData);
+let quantity = shoppingCart.getTotalQuantity(); 
+shoppingCart.cart.forEach( (element) => {
+    const selectProduct = productData.find( (product)=> {
+        return product._id === element.id
+    })
     articleString += `
-        <article class="cart__item" data-id=${item.id} data-color=${item.color}>
+        <article class="cart__item" data-id=${element.id} data-color=${element.color}>
             <div class="cart__item__img">
                 <img src=${selectProduct.imageUrl} alt="Photographie d'un canapé">
             </div>
             <div class="cart__item__content">
                 <div class="cart__item__content__description">
                     <h2>${selectProduct.name}</h2>
-                    <p>${item.color}</p>
+                    <p>${element.color}</p>
                     <p>${selectProduct.price}</p>
                 </div>
                 <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
                         <p>Qté : </p>
-                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${item.quantity}>
+                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${element.quantity}>
                     </div>
                     <div class="cart__item__content__settings__delete">
                         <p class="deleteItem">Supprimer</p>
@@ -35,19 +40,41 @@ shoppingCart.cart.forEach( (item) => {
 });
 
 cartItems.insertAdjacentHTML('beforeEnd',articleString);
+totalQuantity.innerText = quantity;
+totalPrice.innerText=sum;
 
-const itemQuantity = document.querySelectorAll('.itemQuantity');
-itemQuantity.forEach( element => {
-    element.addEventListener('change', e => {
-        // pourquoi sans re-instancé le panier, je ne pouvais pas récupér les valeurs après click ?
-        // sans re-instancé le panier, je dois refresh le page pour récupérer les valeurs.
-        // est ce que c'est un bon pratique de écraser l'ancien instance pour récuperer les valeurs.
-        shoppingCart = new ShoppingCart();
-        // console.log(shoppingCart.cart);
-        let newQuantity = +e.currentTarget.value;
-        let id = e.currentTarget.closest(".cart__item").dataset.id;
-        let color = e.currentTarget.closest(".cart__item").dataset.color;
-        shoppingCart.update(id,color,newQuantity);
+const eventHandler = (elementNodes,eventType)=>{
+    elementNodes.forEach( element => {
+        element.addEventListener(eventType, e => {
+            let id = e.currentTarget.closest(".cart__item").dataset.id;
+            let color = e.currentTarget.closest(".cart__item").dataset.color;
+            if(eventType === 'click') {
+                // delect product functionality
+                shoppingCart.delete(id,color);
+                e.currentTarget.closest(".cart__item").style.display = "none";
+            }else{
+                // update quantity functionality
+                let newQuantity = + e.currentTarget.value;
+                shoppingCart.update(id,color,newQuantity);
+            }
+            // re-render page for total quantity:
+            let quantity = shoppingCart.getTotalQuantity()
+            totalQuantity.innerText = quantity;
+
+            // re-render page for total price:
+            let sum = shoppingCart.getTotalPrice(productData);
+            totalPrice.innerText = sum;
+                
+        })
     })
-})
+}
+
+const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
+const delectItemBtns = document.querySelectorAll('.deleteItem');
+eventHandler(itemQuantityInputs,'change');
+eventHandler(delectItemBtns,'click');
+
+
+
+
 
