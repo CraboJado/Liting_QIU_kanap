@@ -4,7 +4,6 @@ const productData = JSON.parse(localStorage.getItem("productData"));
 
 
 let shoppingCart = new ShoppingCart();
-
 let articleString ="";
 shoppingCart.cart.forEach( (item) => {
     const selectProduct = productData.find( (product)=> {
@@ -44,7 +43,7 @@ itemQuantity.forEach( element => {
         // sans re-instancé le panier, je dois refresh le page pour récupérer les valeurs.
         // est ce que c'est un bon pratique de écraser l'ancien instance pour récuperer les valeurs.
         shoppingCart = new ShoppingCart();
-        console.log(shoppingCart.cart);
+        // console.log(shoppingCart.cart);
         let newQuantity = +e.currentTarget.value;
         let id = e.currentTarget.closest(".cart__item").dataset.id;
         let color = e.currentTarget.closest(".cart__item").dataset.color;
