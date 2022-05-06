@@ -5,12 +5,8 @@ const totalPrice = document.querySelector('#totalPrice');
 const productData = JSON.parse(localStorage.getItem("productData"));
 let shoppingCart = new ShoppingCart();
 
-console.log(shoppingCart.cart);
-
-// first rendering page by using the datas in LocalStorage
+// first rendering page 
 let articleString ="";
-let sum = shoppingCart.getTotalPrice(productData);
-let quantity = shoppingCart.getTotalQuantity(); 
 shoppingCart.cart.forEach( (element) => {
     const selectProduct = productData.find( (product)=> {
         return product._id === element.id
@@ -39,41 +35,151 @@ shoppingCart.cart.forEach( (element) => {
         </article>`;
 });
 
+const sum = shoppingCart.getTotalPrice(productData);
+const quantity = shoppingCart.getTotalQuantity(); 
 cartItems.insertAdjacentHTML('beforeEnd',articleString);
 totalQuantity.innerText = quantity;
 totalPrice.innerText=sum;
 
-const eventHandler = (elementNodes,eventType)=>{
+// handle change quantity functionality and delect product functionality 
+const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
+const delectItemBtns = document.querySelectorAll('.deleteItem');
+
+const eventHandler = (elementNodes,eventType) => {
     elementNodes.forEach( element => {
         element.addEventListener(eventType, e => {
-            let id = e.currentTarget.closest(".cart__item").dataset.id;
-            let color = e.currentTarget.closest(".cart__item").dataset.color;
+            const id = e.currentTarget.closest(".cart__item").dataset.id;
+            const color = e.currentTarget.closest(".cart__item").dataset.color;
+
+            // delect product 
             if(eventType === 'click') {
-                // delect product functionality
                 shoppingCart.delete(id,color);
                 e.currentTarget.closest(".cart__item").style.display = "none";
-            }else{
-                // update quantity functionality
-                let newQuantity = + e.currentTarget.value;
+            }
+
+            // change quantity
+            if(eventType === 'change') {
+                const newQuantity = + e.currentTarget.value;
                 shoppingCart.update(id,color,newQuantity);
             }
+
             // re-render page for total quantity:
-            let quantity = shoppingCart.getTotalQuantity()
+            const quantity = shoppingCart.getTotalQuantity()
             totalQuantity.innerText = quantity;
 
             // re-render page for total price:
-            let sum = shoppingCart.getTotalPrice(productData);
+            const sum = shoppingCart.getTotalPrice(productData);
             totalPrice.innerText = sum;
                 
         })
     })
 }
-
-const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
-const delectItemBtns = document.querySelectorAll('.deleteItem');
 eventHandler(itemQuantityInputs,'change');
 eventHandler(delectItemBtns,'click');
 
+// form vadility
+const form = document.querySelector('.cart__order__form');
+const orderBtn = document.querySelector('.cart__order__form input[type="submit"]');
+const inputs = document.querySelectorAll('.cart__order__form input:required');
+const firstNameErrorMsgNode = document.querySelector('#firstNameErrorMsg');
+const lastNameErrorMsgNode = document.querySelector('#lastNameErrorMsg');
+const addressErrorMsgNode = document.querySelector('#addressErrorMsg');
+const cityErrorMsgNode = document.querySelector('#cityErrorMsg');
+const emailErrorMsgNode = document.querySelector('#emailErrorMsg');
+
+// create regular expression 
+const nameRegex = /^[a-zA-Zéèàùçûü\s]+\-?[a-zA-Zéèàùçûü\s]+$/;
+const cityRegex = /^[a-zA-Zéèàùçûü\s]+$/;
+const addressRegex = /^[a-zA-Z0-9éèàùçûü\s-,]+$/;
+const emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]{2,}[.][a-zA-Z]{2,3}$/;
+
+// create error message
+const nameErrorMsg = 'le prénom doit commencer et finir par une letter et doit contenir au moins 2 lettres et un seul - pour le prénom composé';
+const cityErrorMsg = 'le city doit contenir que les lettres';
+const addressErrorMsg = 'l\'adresse doit contenir que les lettres et les chiffres ';
+const emailErrorMsg = 'le format d\'une adresse mail n\'est pas conforme';
+
+const checkInputValidity = (inputValue,regExp,ErrorMsg,elementNode) => {
+    if(inputValue === ""){
+        elementNode.innerText = 'Veuillez renseigner ce champ';
+    }
+
+    if( regExp.test(inputValue) === false && inputValue != "") {
+        elementNode.innerText = ErrorMsg; 
+    }
+
+    if(regExp.test(inputValue) && inputValue != ""){
+        elementNode.innerText = "";
+        return regExp.test(inputValue);
+    }
+}
+
+inputs.forEach( (element) => {
+    element.addEventListener('blur',(e)=>{
+        const inputValue = e.currentTarget.value;
+
+        if(e.currentTarget.name === "firstName"){
+            checkInputValidity(inputValue,nameRegex,nameErrorMsg,firstNameErrorMsgNode);
+        }
+
+        if(e.currentTarget.name === "lastName"){
+            checkInputValidity(inputValue,nameRegex,nameErrorMsg,lastNameErrorMsgNode);
+        }
+
+        if(e.currentTarget.name === "address"){
+            checkInputValidity(inputValue,addressRegex,addressErrorMsg,addressErrorMsgNode);
+        }
+
+        if(e.currentTarget.name === "city"){
+            checkInputValidity(inputValue,cityRegex,cityErrorMsg,cityErrorMsgNode);
+        }
+
+        if(e.currentTarget.name === "email"){
+            checkInputValidity(inputValue,emailRegex,emailErrorMsg,emailErrorMsgNode);
+        }
+    })
+})
+
+
+orderBtn.addEventListener('click',(e)=>{
+
+    e.preventDefault();
+     const [firstName,lastName,address,city,email] = inputs;
+
+     if ( nameRegex.test(firstName.value) && nameRegex.test(lastName.value) &&
+        addressRegex.test(address.value) && cityRegex.test(city.value) && emailRegex.test(email.value)
+        ) { 
+        const products = shoppingCart.cart.map( (element) => {
+            return element.id
+         });
+
+        const contact = {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            address: address.value,
+            city: city.value,
+            email: email.value
+        };
+
+        const body = {
+            contact :contact,
+            products:products,
+        }
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+
+        fetch('http://localhost:3000/api/products/order',requestOptions)
+        .then( response => response.json())
+        .then( data => {
+            location.href = `confirmation.html?id=${data.orderId}`;
+            // clear localStorage
+        })
+     }
+})
 
 
 

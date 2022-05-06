@@ -62,7 +62,6 @@ class ShoppingCart {
     }
 
     delete(id,color){
-        console.log(this.cart);
         const newShoppingCart = this.cart.filter( element => {
             return !(element.id === id && element.color === color)
         })
@@ -72,7 +71,7 @@ class ShoppingCart {
 
     getTotalQuantity(){
         let TotalQuantity = this.cart.reduce( (accumulateur,valeurCourante) => {
-            return accumulateur+valeurCourante.quantity
+            return accumulateur + valeurCourante.quantity
         },0);
 
         return TotalQuantity;
