@@ -66,10 +66,10 @@ class ShoppingCart {
         return TotalQuantity;
     }
 
-    getTotalPrice(arrIncludePrice){
+    getTotalPrice(productData){
         let sum = 0;
         this.cart.forEach(element => {
-            const selectProduct = arrIncludePrice.find( (product)=> {
+            const selectProduct = productData.find( (product)=> {
                 return product._id === element.id
             });
             sum += element.quantity * selectProduct.price;    
