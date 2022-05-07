@@ -25,17 +25,7 @@ class ShoppingCart {
             const isSameId = this.cart.some( element => element.id === product.id );
             const isSameColor = this.cart.some( element => element.id === product.id && element.color === product.color );
             
-            if (!isSameId ) {
-                this.cart.push(product);
-                this.save(this.cart);
-            } 
-    
-            if (isSameId && !isSameColor) {
-                this.cart.push(product);
-                this.save(this.cart);
-            }
-    
-            if (isSameId && isSameColor) {
+            if(isSameId && isSameColor) {
                 const newShoppingCart = this.cart.map( element => {
                     if (element.id === product.id && element.color === product.color) {
                         return {...element,quantity: element.quantity + product.quantity}
@@ -43,10 +33,11 @@ class ShoppingCart {
                     return element;
                 })
                 this.save(newShoppingCart);
+            }else {
+                this.cart.push(product);
+                this.save(this.cart);
             }
-    
-        }
-        
+        }  
     }
 
     update(id,color,quantity){
@@ -57,16 +48,14 @@ class ShoppingCart {
                 return element;
             }
         })
-        this.save(newShoppingCart); 
-       
+        this.save(newShoppingCart);   
     }
 
     delete(id,color){
         const newShoppingCart = this.cart.filter( element => {
             return !(element.id === id && element.color === color)
         })
-        this.save(newShoppingCart); 
-        
+        this.save(newShoppingCart);  
     }
 
     getTotalQuantity(){
