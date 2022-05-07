@@ -1,11 +1,9 @@
+// first rendering page 
 const cartItems = document.querySelector('#cart__items'); 
 const totalQuantity = document.querySelector('#totalQuantity');
 const totalPrice = document.querySelector('#totalPrice');
-
 const productData = JSON.parse(localStorage.getItem("productData"));
 let shoppingCart = new ShoppingCart();
-
-// first rendering page 
 let articleString ="";
 shoppingCart.cart.forEach( (element) => {
     const selectProduct = productData.find( (product)=> {
@@ -34,7 +32,6 @@ shoppingCart.cart.forEach( (element) => {
             </div>
         </article>`;
 });
-
 const sum = shoppingCart.getTotalPrice(productData);
 const quantity = shoppingCart.getTotalQuantity(); 
 cartItems.insertAdjacentHTML('beforeEnd',articleString);
@@ -45,37 +42,34 @@ totalPrice.innerText=sum;
 const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
 const delectItemBtns = document.querySelectorAll('.deleteItem');
 
-const eventHandler = (elementNodes,eventType) => {
+const eventHandler = (e)=> {
+    const id = e.currentTarget.closest(".cart__item").dataset.id;
+    const color = e.currentTarget.closest(".cart__item").dataset.color;
+    // delect product 
+    if(e.type === 'click') {
+        shoppingCart.delete(id,color);
+        e.currentTarget.closest(".cart__item").style.display = "none";
+    }
+    // change quantity
+    if(e.type === 'change') {
+        const newQuantity = + e.currentTarget.value;
+        shoppingCart.update(id,color,newQuantity);
+    }
+    // re-render page for total quantity:
+    const quantity = shoppingCart.getTotalQuantity()
+    totalQuantity.innerText = quantity;
+    // re-render page for total price:
+    const sum = shoppingCart.getTotalPrice(productData);
+    totalPrice.innerText = sum;     
+};
+
+const setEventListener = (elementNodes,eventType) => {
     elementNodes.forEach( element => {
-        element.addEventListener(eventType, e => {
-            const id = e.currentTarget.closest(".cart__item").dataset.id;
-            const color = e.currentTarget.closest(".cart__item").dataset.color;
-
-            // delect product 
-            if(eventType === 'click') {
-                shoppingCart.delete(id,color);
-                e.currentTarget.closest(".cart__item").style.display = "none";
-            }
-
-            // change quantity
-            if(eventType === 'change') {
-                const newQuantity = + e.currentTarget.value;
-                shoppingCart.update(id,color,newQuantity);
-            }
-
-            // re-render page for total quantity:
-            const quantity = shoppingCart.getTotalQuantity()
-            totalQuantity.innerText = quantity;
-
-            // re-render page for total price:
-            const sum = shoppingCart.getTotalPrice(productData);
-            totalPrice.innerText = sum;
-                
-        })
+        element.addEventListener(eventType,eventHandler)
     })
 }
-eventHandler(itemQuantityInputs,'change');
-eventHandler(delectItemBtns,'click');
+setEventListener(itemQuantityInputs,'change');
+setEventListener(delectItemBtns,'click');
 
 // form vadility
 const form = document.querySelector('.cart__order__form');
