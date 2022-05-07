@@ -1,6 +1,4 @@
-
-
-const img = document.querySelector(".item__img");
+ const img = document.querySelector(".item__img");
 const title = document.querySelector("#title");
 const price = document.querySelector("#price");
 const description = document.querySelector("#description");
@@ -14,23 +12,21 @@ const id = window.location.href.split("?")[1].split("=")[1];
 
 // add to cart functionality 
 const addToCartHandler = () => {
-    addToCartBtn.addEventListener('click', ()=>{
-        const selectedColor = colors.options[colors.selectedIndex].value;
-        const shoppingCartItem = {
-            id:id,
-            quantity: + quantity.value,
-            color:selectedColor
-        }
-    
-        if (selectedColor === "") {
-            alert("please select a color");
-        } else if (quantity.value === "0") {
-            alert("please select a quantity");
-        } else {
-            const shoppingCart = new ShoppingCart();
-            shoppingCart.add(shoppingCartItem);
-        }
-    })
+    const selectedColor = colors.options[colors.selectedIndex].value;
+    const shoppingCartItem = {
+        id:id,
+        quantity: + quantity.value,
+        color:selectedColor
+    }
+
+    if (selectedColor === "") {
+        alert("please select a color");
+    } else if (quantity.value === "0") {
+        alert("please select a quantity");
+    } else {
+        const shoppingCart = new ShoppingCart();
+        shoppingCart.add(shoppingCartItem);
+    }
 }
 
 // fetch data by id ,then render page
@@ -47,7 +43,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
         <option value="${data.colors[i]}">${data.colors[i]}</option>`);
     }
 
-    addToCartHandler();
+    addToCartBtn.addEventListener('click',addToCartHandler);
 
 }).catch( () => alert('something is wrong, please try later') )
 
