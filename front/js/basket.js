@@ -11,11 +11,6 @@ class ShoppingCart {
         this.cart = shoppingCart;
         localStorage.setItem("shoppingCart", JSON.stringify(this.cart)); 
     }
-    // Question à voir avec mentor:
-    // pourquoi sans changer la valuer du proprité cart; je ne pouvais pas récuperer les bonnes valeurs après changement du quantité ?
-    // save(shoppingCart){
-    //     localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));  
-    // }
 
     add (product) {
         if (this.cart.length === 0) {
