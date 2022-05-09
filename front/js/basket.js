@@ -8,7 +8,7 @@ class ShoppingCart {
     }
 
     save (shoppingCart) {
-        this.cart=shoppingCart;
+        this.cart = shoppingCart;
         localStorage.setItem("shoppingCart", JSON.stringify(this.cart)); 
     }
     // Question à voir avec mentor:

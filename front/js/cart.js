@@ -32,44 +32,48 @@ shoppingCart.cart.forEach( (element) => {
             </div>
         </article>`;
 });
-const sum = shoppingCart.getTotalPrice(productData);
-const quantity = shoppingCart.getTotalQuantity(); 
 cartItems.insertAdjacentHTML('beforeEnd',articleString);
-totalQuantity.innerText = quantity;
-totalPrice.innerText=sum;
 
-// handle change quantity functionality and delect product functionality 
+// render total quantity and price
+const renderTotal = () => {
+    const sum = shoppingCart.getTotalPrice(productData);
+    const quantity = shoppingCart.getTotalQuantity(); 
+    totalQuantity.innerText = quantity;
+    totalPrice.innerText=sum;
+};
+renderTotal();
+
+
 const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
 const delectItemBtns = document.querySelectorAll('.deleteItem');
 
-const eventHandler = (e)=> {
+// listen click event to delect product
+const deleteProductHandler = (e) => {
     const id = e.currentTarget.closest(".cart__item").dataset.id;
     const color = e.currentTarget.closest(".cart__item").dataset.color;
-    // delect product 
-    if(e.type === 'click') {
-        shoppingCart.delete(id,color);
-        e.currentTarget.closest(".cart__item").style.display = "none";
-    }
-    // change quantity
-    if(e.type === 'change') {
-        const newQuantity = + e.currentTarget.value;
-        shoppingCart.update(id,color,newQuantity);
-    }
-    // re-render page for total quantity:
-    const quantity = shoppingCart.getTotalQuantity()
-    totalQuantity.innerText = quantity;
-    // re-render page for total price:
-    const sum = shoppingCart.getTotalPrice(productData);
-    totalPrice.innerText = sum;     
-};
-
-const setEventListener = (elementNodes,eventType) => {
-    elementNodes.forEach( element => {
-        element.addEventListener(eventType,eventHandler)
-    })
+    shoppingCart.delete(id,color);
+    e.currentTarget.closest(".cart__item").style.display = "none";
+    renderTotal(); 
 }
-setEventListener(itemQuantityInputs,'change');
-setEventListener(delectItemBtns,'click');
+
+// listen change event to change quantity
+const changeQuantityHandler = (e) => {
+    const id = e.currentTarget.closest(".cart__item").dataset.id;
+    const color = e.currentTarget.closest(".cart__item").dataset.color;
+    const newQuantity = + e.currentTarget.value;
+    shoppingCart.update(id,color,newQuantity);
+    renderTotal();
+}
+
+delectItemBtns.forEach ( (element) => {
+    element.addEventListener('click',deleteProductHandler);
+});
+
+itemQuantityInputs.forEach ( (element) => {
+    element.addEventListener('change',changeQuantityHandler);
+});
+
+
 
 // form vadility
 const form = document.querySelector('.cart__order__form');
@@ -93,6 +97,7 @@ const cityErrorMsg = 'le city doit contenir que les lettres';
 const addressErrorMsg = 'l\'adresse doit contenir que les lettres et les chiffres ';
 const emailErrorMsg = 'le format d\'une adresse mail n\'est pas conforme';
 
+// check input validity 
 const checkInputValidity = (inputValue,regExp,ErrorMsg,elementNode) => {
     if(inputValue === ""){
         elementNode.innerText = 'Veuillez renseigner ce champ';
@@ -104,34 +109,35 @@ const checkInputValidity = (inputValue,regExp,ErrorMsg,elementNode) => {
 
     if(regExp.test(inputValue) && inputValue != ""){
         elementNode.innerText = "";
-        return regExp.test(inputValue);
     }
 }
 
+// listen blur event to check input validity
+const changeInputHandler = (e) => {
+    const inputValue = e.currentTarget.value;
+    if(e.currentTarget.name === "firstName"){
+        checkInputValidity(inputValue,nameRegex,nameErrorMsg,firstNameErrorMsgNode);
+    }
+
+    if(e.currentTarget.name === "lastName"){
+        checkInputValidity(inputValue,nameRegex,nameErrorMsg,lastNameErrorMsgNode);
+    }
+
+    if(e.currentTarget.name === "address"){
+        checkInputValidity(inputValue,addressRegex,addressErrorMsg,addressErrorMsgNode);
+    }
+
+    if(e.currentTarget.name === "city"){
+        checkInputValidity(inputValue,cityRegex,cityErrorMsg,cityErrorMsgNode);
+    }
+
+    if(e.currentTarget.name === "email"){
+        checkInputValidity(inputValue,emailRegex,emailErrorMsg,emailErrorMsgNode);
+    }
+};
+
 inputs.forEach( (element) => {
-    element.addEventListener('blur',(e)=>{
-        const inputValue = e.currentTarget.value;
-
-        if(e.currentTarget.name === "firstName"){
-            checkInputValidity(inputValue,nameRegex,nameErrorMsg,firstNameErrorMsgNode);
-        }
-
-        if(e.currentTarget.name === "lastName"){
-            checkInputValidity(inputValue,nameRegex,nameErrorMsg,lastNameErrorMsgNode);
-        }
-
-        if(e.currentTarget.name === "address"){
-            checkInputValidity(inputValue,addressRegex,addressErrorMsg,addressErrorMsgNode);
-        }
-
-        if(e.currentTarget.name === "city"){
-            checkInputValidity(inputValue,cityRegex,cityErrorMsg,cityErrorMsgNode);
-        }
-
-        if(e.currentTarget.name === "email"){
-            checkInputValidity(inputValue,emailRegex,emailErrorMsg,emailErrorMsgNode);
-        }
-    })
+    element.addEventListener('blur',changeInputHandler);
 })
 
 
@@ -171,6 +177,7 @@ orderBtn.addEventListener('click',(e)=>{
         .then( data => {
             location.href = `confirmation.html?id=${data.orderId}`;
             // clear localStorage
+            localStorage.clear();
         })
      }
 })
