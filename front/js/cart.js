@@ -204,6 +204,7 @@ orderBtn.addEventListener('click', e =>{
             // clear localStorage
             localStorage.clear();
         })
+        .catch( error => alert(error));
      }
 })
 
