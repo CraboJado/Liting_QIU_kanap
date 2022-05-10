@@ -60,9 +60,17 @@ const deleteProductHandler = (e) => {
 const changeQuantityHandler = (e) => {
     const id = e.currentTarget.closest(".cart__item").dataset.id;
     const color = e.currentTarget.closest(".cart__item").dataset.color;
-    const newQuantity = + e.currentTarget.value;
+    let newQuantity = + e.currentTarget.value;
+
+    if(newQuantity > 100){
+        alert("la quantité maximum d'un produit est 100");
+        e.currentTarget.value = 100;
+        newQuantity = 100;
+    }
+
     shoppingCart.update(id,color,newQuantity);
     renderTotal();
+
 }
 
 delectItemBtns.forEach ( (element) => {
