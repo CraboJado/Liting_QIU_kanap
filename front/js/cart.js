@@ -157,7 +157,8 @@ inputs.forEach( (element) => {
 orderBtn.addEventListener('click', e =>{
      e.preventDefault();
      const [firstName,lastName,address,city,email] = inputs;
-      
+    
+    //  show error msg when inputs are not valid.
      if(shoppingCart.cart.length === 0){
          alert('votre panier est vide');
      }else {
