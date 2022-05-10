@@ -26,7 +26,6 @@ const addToCart = (colors,id,quantity) => {
     }else{
         const shoppingCart = new ShoppingCart();
         shoppingCart.add(shoppingCartItem);
-        console.log(shoppingCart);
     }
 }
 
