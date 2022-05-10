@@ -43,7 +43,6 @@ const renderTotal = () => {
 };
 renderTotal();
 
-
 const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
 const delectItemBtns = document.querySelectorAll('.deleteItem');
 
@@ -105,11 +104,17 @@ const cityErrorMsg = 'le city doit contenir que les lettres';
 const addressErrorMsg = 'l\'adresse doit contenir que les lettres et les chiffres ';
 const emailErrorMsg = 'le format d\'une adresse mail n\'est pas conforme';
 
+// check if input is empty
+const checkInputEmpty = (inputValue,ErrorMsgNode) => {
+    if (inputValue === "") {
+        ErrorMsgNode.innerText = 'Veuillez renseigner ce champ';
+     }
+}
+
 // check input validity 
 const checkInputValidity = (inputValue,regExp,ErrorMsg,elementNode) => {
-    if(inputValue === ""){
-        elementNode.innerText = 'Veuillez renseigner ce champ';
-    }
+
+    checkInputEmpty(inputValue,elementNode)
 
     if( regExp.test(inputValue) === false && inputValue != "") {
         elementNode.innerText = ErrorMsg; 
@@ -149,17 +154,29 @@ inputs.forEach( (element) => {
 })
 
 
-orderBtn.addEventListener('click',(e)=>{
-
-    e.preventDefault();
+orderBtn.addEventListener('click', e =>{
+     e.preventDefault();
      const [firstName,lastName,address,city,email] = inputs;
-
-     if ( nameRegex.test(firstName.value) && nameRegex.test(lastName.value) &&
-        addressRegex.test(address.value) && cityRegex.test(city.value) && emailRegex.test(email.value)
-        ) { 
+      
+     if(shoppingCart.cart.length === 0){
+         alert('votre panier est vide');
+     }else {
+        checkInputEmpty(firstName.value,firstNameErrorMsgNode);
+        checkInputEmpty(lastName.value,lastNameErrorMsgNode);
+        checkInputEmpty(address.value,addressErrorMsgNode);
+        checkInputEmpty(city.value,cityErrorMsgNode);
+        checkInputEmpty(email.value,emailErrorMsgNode);
+     }
+    //  send data to server when all inputs are valid
+     if(nameRegex.test(firstName.value) && 
+        nameRegex.test(lastName.value) &&
+        addressRegex.test(address.value) && 
+        cityRegex.test(city.value) && 
+        emailRegex.test(email.value)
+        ){ 
         const products = shoppingCart.cart.map( (element) => {
-            return element.id
-         });
+        return element.id
+        });
 
         const contact = {
             firstName: firstName.value,
@@ -172,7 +189,7 @@ orderBtn.addEventListener('click',(e)=>{
         const body = {
             contact :contact,
             products:products,
-        }
+        };
 
         const requestOptions = {
             method: 'POST',
@@ -188,8 +205,6 @@ orderBtn.addEventListener('click',(e)=>{
             localStorage.clear();
         })
      }
-
-    //  ajouter message error
 })
 
 
