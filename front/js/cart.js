@@ -153,7 +153,7 @@ inputs.forEach( (element) => {
     element.addEventListener('blur',changeInputHandler);
 })
 
-
+// send form data to back-end
 orderBtn.addEventListener('click', e =>{
      e.preventDefault();
      const [firstName,lastName,address,city,email] = inputs;
