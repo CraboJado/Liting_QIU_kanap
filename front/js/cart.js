@@ -89,7 +89,7 @@ const emailErrorMsgNode = document.querySelector('#emailErrorMsg');
 const nameRegex = /^[a-zA-Zéèàùçûü\s]+\-?[a-zA-Zéèàùçûü\s]+$/;
 const cityRegex = /^[a-zA-Zéèàùçûü\s]+$/;
 const addressRegex = /^[a-zA-Z0-9éèàùçûü\s-,]+$/;
-const emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]{2,}[.][a-zA-Z]{2,3}$/;
+const emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]{2,}[.][a-zA-Z]{2,3}$/; //à modifier prendre en compte . +
 
 // create error message
 const nameErrorMsg = 'le prénom doit commencer et finir par une letter et doit contenir au moins 2 lettres et un seul - pour le prénom composé';
@@ -180,6 +180,8 @@ orderBtn.addEventListener('click',(e)=>{
             localStorage.clear();
         })
      }
+
+    //  ajouter message error
 })
 
 

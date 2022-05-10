@@ -1,4 +1,3 @@
-
 // get product items container
 const itemsContainer = document.querySelector("#items");
 
