@@ -23,6 +23,7 @@ const addToCart = (colors,id,quantity) => {
         alert("veuillez sélectionner une quantité");
     } else if (quantity.value > 100) {
         alert("la quantité maximum est 100");
+        quantity.value = 100;
     }else{
         const shoppingCart = new ShoppingCart();
         shoppingCart.add(shoppingCartItem);
