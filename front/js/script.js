@@ -4,7 +4,7 @@ const itemsContainer = document.querySelector("#items");
 // get products data
 fetch('http://localhost:3000/api/products')
 .then( response => response.json() )
-.then(data => {
+.then( data => {
 
   let listItems ="";
 
@@ -21,11 +21,12 @@ fetch('http://localhost:3000/api/products')
     } )
 
     itemsContainer.innerHTML = listItems;
-
+    
+    // save products data in LocalStorage
     localStorage.setItem("productData",JSON.stringify(data));
 
-}).catch((error) => {
-  alert( error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois')
+}).catch( error => {
+  itemsContainer.innerHTML = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';
 });
 
 
