@@ -71,8 +71,5 @@ class ShoppingCart {
         });
         return sum;
     }
-
-
-
 }
 

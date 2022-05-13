@@ -68,7 +68,6 @@ const changeQuantityHandler = e => {
 
     shoppingCart.update(id,color,newQuantity);
     renderTotal(shoppingCart,productData,totalQuantity,totalPrice);
-
 }
 
 delectItemBtns.forEach ( element => {
@@ -184,7 +183,8 @@ orderBtn.addEventListener('click', e => {
         cityRegex.test(city.value) && 
         emailRegex.test(email.value)
         ){ 
-        const products = shoppingCart.cart.map( element => element.id );
+        // get to-order product id
+        const productsIdArr = shoppingCart.cart.map( element => element.id );
 
         // remove space of inputs values
         const contact = {
@@ -197,7 +197,7 @@ orderBtn.addEventListener('click', e => {
 
         const body = {
             contact :contact,
-            products:products,
+            products:productsIdArr,
         };
 
         const requestOptions = {
@@ -216,7 +216,6 @@ orderBtn.addEventListener('click', e => {
         .catch( error => alert(error));
         }
     }
-
 })
 
 
