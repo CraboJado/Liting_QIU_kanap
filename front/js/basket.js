@@ -35,9 +35,9 @@ class ShoppingCart {
         }  
     }
 
-    update(id,color,quantity){
+    update(product,quantity){
         const newShoppingCart = this.cart.map( (element) => {
-            if(element.id === id && element.color === color) {
+            if(element.id === product.id && element.color === product.color) {
                 return {...element,quantity:quantity}
             }else {
                 return element;
@@ -46,9 +46,9 @@ class ShoppingCart {
         this.save(newShoppingCart);   
     }
 
-    delete(id,color){
+    delete(product){
         const newShoppingCart = this.cart.filter( element => {
-            return !(element.id === id && element.color === color)
+            return !(element.id === product.id && element.color === product.color)
         })
         this.save(newShoppingCart);  
     }

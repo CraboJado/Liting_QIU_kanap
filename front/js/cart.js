@@ -1,7 +1,7 @@
 // first rendering page 
-const cartItems = document.querySelector('#cart__items'); 
-const totalQuantity = document.querySelector('#totalQuantity');
-const totalPrice = document.querySelector('#totalPrice');
+const cartItemsEle = document.querySelector('#cart__items'); 
+const totalQuantityEle = document.querySelector('#totalQuantity');
+const totalPriceEle = document.querySelector('#totalPrice');
 
 const productData = JSON.parse(localStorage.getItem("productData"));
 let shoppingCart = new ShoppingCart();
@@ -31,16 +31,16 @@ shoppingCart.cart.forEach( element => {
             </div>
         </article>`;
 });
-cartItems.insertAdjacentHTML('beforeEnd',articleString);
+cartItemsEle.insertAdjacentHTML('beforeEnd',articleString);
 
 // render total quantity and price
-const renderTotal = (shoppingCart,productData,totalQuantity,totalPrice) => {
+const renderTotal = (shoppingCart,productData,totalQuantityEle,totalPriceEle) => {
     const sum = shoppingCart.getTotalPrice(productData);
     const quantity = shoppingCart.getTotalQuantity(); 
-    totalQuantity.innerText = quantity;
-    totalPrice.innerText=sum;
+    totalQuantityEle.innerText = quantity;
+    totalPriceEle.innerText=sum;
 };
-renderTotal(shoppingCart,productData,totalQuantity,totalPrice);
+renderTotal(shoppingCart,productData,totalQuantityEle,totalPriceEle);
 
 const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
 const delectItemBtns = document.querySelectorAll('.deleteItem');
@@ -49,15 +49,24 @@ const delectItemBtns = document.querySelectorAll('.deleteItem');
 const deleteProductHandler = e => {
     const id = e.currentTarget.closest(".cart__item").dataset.id;
     const color = e.currentTarget.closest(".cart__item").dataset.color;
-    shoppingCart.delete(id,color);
+    const product = {
+        id:id,
+        color:color
+    };
+
+    shoppingCart.delete(product);
     e.currentTarget.closest(".cart__item").style.display = "none";
-    renderTotal(shoppingCart,productData,totalQuantity,totalPrice);
+    renderTotal(shoppingCart,productData,totalQuantityEle,totalPriceEle);
 }
 
 // listen change event of inputs (itemQuantity)
 const changeQuantityHandler = e => {
     const id = e.currentTarget.closest(".cart__item").dataset.id;
     const color = e.currentTarget.closest(".cart__item").dataset.color;
+    const product = {
+        id:id,
+        color:color
+    };
     let newQuantity = + e.currentTarget.value;
 
     if(newQuantity > 100){
@@ -66,8 +75,8 @@ const changeQuantityHandler = e => {
         newQuantity = 100;
     }
 
-    shoppingCart.update(id,color,newQuantity);
-    renderTotal(shoppingCart,productData,totalQuantity,totalPrice);
+    shoppingCart.update(product,newQuantity);
+    renderTotal(shoppingCart,productData,totalQuantityEle,totalPriceEle);
 }
 
 delectItemBtns.forEach ( element => {
@@ -81,14 +90,14 @@ itemQuantityInputs.forEach ( element => {
 
 
 // form vadility
-const form = document.querySelector('.cart__order__form');
+const form = document.querySelector('.cart__order__form'); 
 const orderBtn = document.querySelector('.cart__order__form input[type="submit"]');
 const inputs = document.querySelectorAll('.cart__order__form input:required');
-const firstNameErrorMsgNode = document.querySelector('#firstNameErrorMsg');
-const lastNameErrorMsgNode = document.querySelector('#lastNameErrorMsg');
-const addressErrorMsgNode = document.querySelector('#addressErrorMsg');
-const cityErrorMsgNode = document.querySelector('#cityErrorMsg');
-const emailErrorMsgNode = document.querySelector('#emailErrorMsg');
+const firstNameErrorMsgEle = document.querySelector('#firstNameErrorMsg');
+const lastNameErrorMsgEle = document.querySelector('#lastNameErrorMsg');
+const addressErrorMsgEle = document.querySelector('#addressErrorMsg');
+const cityErrorMsgEle = document.querySelector('#cityErrorMsg');
+const emailErrorMsgEle = document.querySelector('#emailErrorMsg');
 
 // create regular expression 
 const nameRegex = /^[a-zA-Zéèàùçûü\s]+[-a-zA-Zéèàùçûü\s]*$/;
@@ -127,23 +136,23 @@ const checkInputValidity = (inputValue,regExp,ErrorMsg,elementNode) => {
 const changeInputHandler = e => {
     const inputValue = e.currentTarget.value;
     if(e.currentTarget.name === "firstName"){
-        checkInputValidity(inputValue,nameRegex,nameErrorMsg,firstNameErrorMsgNode);
+        checkInputValidity(inputValue,nameRegex,nameErrorMsg,firstNameErrorMsgEle);
     }
 
     if(e.currentTarget.name === "lastName"){
-        checkInputValidity(inputValue,nameRegex,nameErrorMsg,lastNameErrorMsgNode);
+        checkInputValidity(inputValue,nameRegex,nameErrorMsg,lastNameErrorMsgEle);
     }
 
     if(e.currentTarget.name === "address"){
-        checkInputValidity(inputValue,addressRegex,addressErrorMsg,addressErrorMsgNode);
+        checkInputValidity(inputValue,addressRegex,addressErrorMsg,addressErrorMsgEle);
     }
 
     if(e.currentTarget.name === "city"){
-        checkInputValidity(inputValue,cityRegex,cityErrorMsg,cityErrorMsgNode);
+        checkInputValidity(inputValue,cityRegex,cityErrorMsg,cityErrorMsgEle);
     }
 
     if(e.currentTarget.name === "email"){
-        checkInputValidity(inputValue,emailRegex,emailErrorMsg,emailErrorMsgNode);
+        checkInputValidity(inputValue,emailRegex,emailErrorMsg,emailErrorMsgEle);
     }
 };
 
@@ -170,11 +179,11 @@ orderBtn.addEventListener('click', e => {
          alert('votre panier est vide');
      }else {
         //  show error msg when inputs are empty
-        emptyInputMsg(firstName.value,firstNameErrorMsgNode);
-        emptyInputMsg(lastName.value,lastNameErrorMsgNode);
-        emptyInputMsg(address.value,addressErrorMsgNode);
-        emptyInputMsg(city.value,cityErrorMsgNode);
-        emptyInputMsg(email.value,emailErrorMsgNode);
+        emptyInputMsg(firstName.value,firstNameErrorMsgEle);
+        emptyInputMsg(lastName.value,lastNameErrorMsgEle);
+        emptyInputMsg(address.value,addressErrorMsgEle);
+        emptyInputMsg(city.value,cityErrorMsgEle);
+        emptyInputMsg(email.value,emailErrorMsgEle);
 
         //  send form datas to server when all inputs are valid
         if(nameRegex.test(firstName.value) && 
