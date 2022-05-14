@@ -218,6 +218,7 @@ orderBtn.addEventListener('click', e => {
         fetch('http://localhost:3000/api/products/order',requestOptions)
         .then( response => response.json())
         .then( data => {
+            // redirection to confirmation page
             location.href = `confirmation.html?id=${data.orderId}`;
             // clear localStorage
             localStorage.clear();
