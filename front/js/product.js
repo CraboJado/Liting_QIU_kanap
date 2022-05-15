@@ -4,6 +4,7 @@ const quantityElement = document.querySelector("#quantity");
 // get product id from current URL
 const id = window.location.href.split("?")[1].split("=")[1];
 
+// render img
 const renderImg = data => {
     const img = createElement('img');
     appendElement(imgContainer,img);
@@ -13,21 +14,25 @@ const renderImg = data => {
     alt.setAttribute(img);
 }
 
+// render title
 const renderTitle = data => {
     const titleElement = document.querySelector("#title");
     setInnerText(titleElement,data.name);
 }
 
+// render price
 const renderPrice = data => {
     const priceElement = document.querySelector("#price");
     setInnerText(priceElement ,data.price);
 }
 
+// render discription
 const renderDescription = data => {
     const descripElement = document.querySelector("#description");
     setInnerText(descripElement,data.description);
 }
 
+// render colorOption dropdown menu
 const renderColorOption = data => {
     const colorsElement = document.querySelector("#colors");
     for (i=0; i<data.colors.length; i++){
@@ -40,18 +45,14 @@ const renderColorOption = data => {
 }
 
 const renderPage = data => {
-    // render img
     renderImg(data);
-    // render title
     renderTitle(data);
-    // render price
     renderPrice(data);
-    // render discription
     renderDescription(data);
-    // render colorOption dropdown menu
     renderColorOption(data);
 }
 
+// get seleted product
 const getSelectedProduct = id => {
     const colorsElement = document.querySelector("#colors");
     const selectedColor = colorsElement.options[colorsElement.selectedIndex].value;
@@ -63,6 +64,7 @@ const getSelectedProduct = id => {
     return product
 }
 
+// add to shopping cart
 const addToCart = () => {
     const product = getSelectedProduct(id);
     if (product.color === "") {
@@ -78,17 +80,19 @@ const addToCart = () => {
     }
 }
 
+// fetch data by Id and render page
 const fetchDataById = (id) => {
-    return fetch(`http://localhost:3000/api/products/${id}`)
+    fetch(`http://localhost:3000/api/products/${id}`)
+    .then( response  => response.json() )
+    .then( data => {
+        renderPage(data);
+        addToCartBtn.addEventListener('click', () => addToCart())
+    })
+    .catch( error => {imgContainer.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';})
 };
 
-fetchDataById(id)
-.then( response  => response.json() )
-.then( data => {
-    renderPage(data);
-    addToCartBtn.addEventListener('click', () => addToCart())
-})
-.catch( error => {imgContainer.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';})
+fetchDataById(id);
+
 
 
 
