@@ -13,32 +13,26 @@ class ShoppingCart {
     }
 
     add (product) {
-        if (this.cart.length === 0) {
+        const isSameProduct = this.cart.some( element => element.id === product.id && element.color === product.color );
+            
+        if(isSameProduct) {
+            const newShoppingCart = this.cart.map( element => {
+                if (element.id === product.id && element.color === product.color) {
+                    return {...element,quantity: element.quantity + product.quantity}
+                }
+                return element;
+            })
+            this.save(newShoppingCart);
+        }else {
             this.cart.push(product);
             this.save(this.cart);
-        }else {
-            const isSameId = this.cart.some( element => element.id === product.id );
-            const isSameColor = this.cart.some( element => element.id === product.id && element.color === product.color );
-            
-            if(isSameId && isSameColor) {
-                const newShoppingCart = this.cart.map( element => {
-                    if (element.id === product.id && element.color === product.color) {
-                        return {...element,quantity: element.quantity + product.quantity}
-                    }
-                    return element;
-                })
-                this.save(newShoppingCart);
-            }else {
-                this.cart.push(product);
-                this.save(this.cart);
-            }
-        }  
+        }
     }
 
-    update(product,quantity){
+    update(product){
         const newShoppingCart = this.cart.map( (element) => {
             if(element.id === product.id && element.color === product.color) {
-                return {...element,quantity:quantity}
+                return {...element,quantity:product.quantity}
             }else {
                 return element;
             }
