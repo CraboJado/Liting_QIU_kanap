@@ -1,7 +1,7 @@
+const itemsElement = document.querySelector('#items');
 
+// render created elements on the page
 const renderPage = data => {
-  const itemsElement = document.querySelector('#items');
-
   data.forEach( product => {
     const aElement = createElement('a');
     const articleElement = createElement('article');
@@ -28,22 +28,23 @@ const renderPage = data => {
     setInnerText(titleElement,product.name);
     setInnerText(descElement,product.description);
   })
-
 }
 
+// fetch data 
 const fetchProdutData = () => {
-  return fetch('http://localhost:3000/api/products')
+    fetch('http://localhost:3000/api/products')
+    .then( response => response.json() )
+    .then( data => {
+        // render page
+        renderPage(data)
+        // save product data in LocalStorage
+        localStorage.setItem('productData',JSON.stringify(data));
+    })
+    .catch( error => {itemsElement.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';});
 }
 
-fetchProdutData()
-.then( response => response.json() )
-.then( data => {
-    // render page
-    renderPage(data)
-    // save product data in LocalStorage
-    localStorage.setItem('productData',JSON.stringify(data));
-})
-.catch( error => {itemsElement.innerHTML = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';});
+fetchProdutData();
+
 
 
 
