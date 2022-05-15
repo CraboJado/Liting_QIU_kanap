@@ -1,7 +1,8 @@
+const cartItemsElement = document.querySelector('#cart__items'); 
 const productData = JSON.parse(localStorage.getItem("productData"));
 const shoppingCart = new ShoppingCart();
 
-// get html element string integreted with shoppingcart datas
+// get html element article string integreted with shoppingcart datas
 const getArticleHtmlString = (shoppingCart,productData) => {
     let articleHtmlString ="";
     shoppingCart.cart.forEach( element => {
@@ -36,7 +37,6 @@ const getArticleHtmlString = (shoppingCart,productData) => {
 // render shopping cart items on the page
 const renderShoppingCart = () => {
     const articleHtmlString = getArticleHtmlString(shoppingCart,productData);
-    const cartItemsElement = document.querySelector('#cart__items'); 
     cartItemsElement.insertAdjacentHTML('beforeEnd',articleHtmlString);
 }
 
@@ -64,7 +64,7 @@ const deleteProductListener = e => {
     };
 
     shoppingCart.delete(product);
-    e.currentTarget.closest(".cart__item").style.display = "none";
+    cartItemsElement.removeChild(e.currentTarget.closest(".cart__item"));
     renderTotalQty();
     renderTotalPrice();
 }
@@ -206,20 +206,12 @@ const removeSpace = (inputValue) => {
 }
 // get body to send to back-end
 const getPostBody = () => {
-    // const contact = {
-    //     firstName: removeAllSpace(firstName.value),
-    //     lastName: removeAllSpace(lastName.value),
-    //     address: removeSpace(address.value),
-    //     city: removeAllSpace(city.value),
-    //     email: removeAllSpace(email.value)
-    // };
-
     const contact = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address:address.value,
-        city: city.value,
-        email:email.value
+        firstName: removeAllSpace(firstName.value),
+        lastName: removeAllSpace(lastName.value),
+        address: removeSpace(address.value),
+        city: removeAllSpace(city.value),
+        email: removeAllSpace(email.value)
     };
 
     const body = {
@@ -230,7 +222,12 @@ const getPostBody = () => {
 }
 
 // send body to back-end and get orderID
-const fetchData = (requestOptions) => {
+const fetchData = () => {
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json' },
+        body: JSON.stringify(getPostBody())
+    };  
     fetch('http://localhost:3000/api/products/order',requestOptions)
     .then( response => response.json())
     .then( data => {
@@ -255,23 +252,12 @@ const isAllValid = () => {
     }
 }
 
-// handle form inputs 
-const formHandler = () => {
-    const isTrue= isAllValid();
-    if(isTrue){
-        const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json' },
-            body: JSON.stringify(getPostBody())
-        };
-        fetchData(requestOptions);
-    }else{
-        firstNameHandler(firstName.value);
-        lastNameHandler(lastName.value);
-        addressHandler(address.value);
-        cityHandler(city.value);
-        emailHandler(email.value);
-    }
+const userInputsHandler = () => {
+    firstNameHandler(firstName.value);
+    lastNameHandler(lastName.value);
+    addressHandler(address.value);
+    cityHandler(city.value);
+    emailHandler(email.value);
 }
 
 // listen blur event of form inputs
@@ -304,11 +290,11 @@ const orderListener = e => {
     if(shoppingCart.cart.length === 0){
         alert('votre panier est vide');
     }else {
-       formHandler();
+        isAllValid() ? fetchData() : userInputsHandler();
    }
 }
 
-orderBtn.addEventListener('click',orderListener )
+orderBtn.addEventListener('click',orderListener)
 
 
 
