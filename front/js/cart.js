@@ -1,52 +1,61 @@
-// first rendering page 
-const cartItemsEle = document.querySelector('#cart__items'); 
-const totalQuantityEle = document.querySelector('#totalQuantity');
-const totalPriceEle = document.querySelector('#totalPrice');
-
 const productData = JSON.parse(localStorage.getItem("productData"));
-let shoppingCart = new ShoppingCart();
-let articleString ="";
-shoppingCart.cart.forEach( element => {
-    const selectProduct = productData.find( product => product._id === element.id );
-    articleString += `
-        <article class="cart__item" data-id=${element.id} data-color=${element.color}>
-            <div class="cart__item__img">
-                <img src=${selectProduct.imageUrl} alt="Photographie d'un canapé ${selectProduct.name}">
-            </div>
-            <div class="cart__item__content">
-                <div class="cart__item__content__description">
-                    <h2>${selectProduct.name}</h2>
-                    <p>${element.color}</p>
-                    <p>${selectProduct.price}</p>
-                </div>
-                <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                        <p>Qté : </p>
-                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${element.quantity}>
-                    </div>
-                    <div class="cart__item__content__settings__delete">
-                        <p class="deleteItem">Supprimer</p>
-                    </div>
-                </div>
-            </div>
-        </article>`;
-});
-cartItemsEle.insertAdjacentHTML('beforeEnd',articleString);
+const shoppingCart = new ShoppingCart();
 
-// render total quantity and price
-const renderTotal = (shoppingCart,productData,totalQuantityEle,totalPriceEle) => {
-    const sum = shoppingCart.getTotalPrice(productData);
+// get html element string integreted with shoppingcart datas
+const getArticleHtmlString = (shoppingCart,productData) => {
+    let articleHtmlString ="";
+    shoppingCart.cart.forEach( element => {
+        const selectProduct = productData.find( product => product._id === element.id );
+
+        articleHtmlString += `
+            <article class="cart__item" data-id=${element.id} data-color=${element.color}>
+                <div class="cart__item__img">
+                    <img src=${selectProduct.imageUrl} alt="Photographie d'un canapé ${selectProduct.name}">
+                </div>
+                <div class="cart__item__content">
+                    <div class="cart__item__content__description">
+                        <h2>${selectProduct.name}</h2>
+                        <p>${element.color}</p>
+                        <p>${selectProduct.price}</p>
+                    </div>
+                    <div class="cart__item__content__settings">
+                        <div class="cart__item__content__settings__quantity">
+                            <p>Qté : </p>
+                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${element.quantity}>
+                        </div>
+                        <div class="cart__item__content__settings__delete">
+                            <p class="deleteItem">Supprimer</p>
+                        </div>
+                    </div>
+                </div>
+            </article>`;
+    });
+    return articleHtmlString
+}
+
+// render shopping cart items on the page
+const renderShoppingCart = () => {
+    const articleHtmlString = getArticleHtmlString(shoppingCart,productData);
+    const cartItemsElement = document.querySelector('#cart__items'); 
+    cartItemsElement.insertAdjacentHTML('beforeEnd',articleHtmlString);
+}
+
+// render total quantity of shopping cart items on the page
+const renderTotalQty = () => {
+    const totalQuantityEle = document.querySelector('#totalQuantity');
     const quantity = shoppingCart.getTotalQuantity(); 
     totalQuantityEle.innerText = quantity;
-    totalPriceEle.innerText=sum;
-};
-renderTotal(shoppingCart,productData,totalQuantityEle,totalPriceEle);
+}
 
-const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
-const delectItemBtns = document.querySelectorAll('.deleteItem');
+// render total price of shopping cart items on the page
+const renderTotalPrice = () => {
+    const totalPriceEle = document.querySelector('#totalPrice');
+    const sum = shoppingCart.getTotalPrice(productData);
+    totalPriceEle.innerText = sum;
+}
 
-// listen click event of buttons (deleteItem)
-const deleteProductHandler = e => {
+// listen click event of delete buttons (deleteItem)
+const deleteProductListener = e => {
     const id = e.currentTarget.closest(".cart__item").dataset.id;
     const color = e.currentTarget.closest(".cart__item").dataset.color;
     const product = {
@@ -56,48 +65,53 @@ const deleteProductHandler = e => {
 
     shoppingCart.delete(product);
     e.currentTarget.closest(".cart__item").style.display = "none";
-    renderTotal(shoppingCart,productData,totalQuantityEle,totalPriceEle);
+    renderTotalQty();
+    renderTotalPrice();
 }
 
-// listen change event of inputs (itemQuantity)
-const changeQuantityHandler = e => {
+// listen change event of quantity inputs (itemQuantity)
+const changeQuantityListener = e => {
     const id = e.currentTarget.closest(".cart__item").dataset.id;
     const color = e.currentTarget.closest(".cart__item").dataset.color;
     const product = {
         id:id,
-        color:color
+        color:color,
+        quantity: + e.currentTarget.value
     };
-    let newQuantity = + e.currentTarget.value;
 
-    if(newQuantity > 100){
+    if(product.quantity > 100){
         alert("la quantité maximum d'un produit est 100");
         e.currentTarget.value = 100;
-        newQuantity = 100;
+        product.quantity = 100;
     }
 
-    shoppingCart.update(product,newQuantity);
-    renderTotal(shoppingCart,productData,totalQuantityEle,totalPriceEle);
+    shoppingCart.update(product);
+    renderTotalQty();
+    renderTotalPrice();
 }
 
-delectItemBtns.forEach ( element => {
-    element.addEventListener('click',deleteProductHandler);
+renderShoppingCart();
+renderTotalQty();
+renderTotalPrice();
+
+const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
+const delectItemBtns = document.querySelectorAll('.deleteItem');
+delectItemBtns.forEach ( delectItemBtn => {
+    delectItemBtn.addEventListener('click',deleteProductListener);
 });
-
-itemQuantityInputs.forEach ( element => {
-    element.addEventListener('change',changeQuantityHandler);
+itemQuantityInputs.forEach ( input => {
+    input.addEventListener('change',changeQuantityListener);
 });
-
-
 
 // form vadility
-const form = document.querySelector('.cart__order__form'); 
 const orderBtn = document.querySelector('.cart__order__form input[type="submit"]');
-const inputs = document.querySelectorAll('.cart__order__form input:required');
 const firstNameErrorMsgEle = document.querySelector('#firstNameErrorMsg');
 const lastNameErrorMsgEle = document.querySelector('#lastNameErrorMsg');
 const addressErrorMsgEle = document.querySelector('#addressErrorMsg');
 const cityErrorMsgEle = document.querySelector('#cityErrorMsg');
 const emailErrorMsgEle = document.querySelector('#emailErrorMsg');
+const inputs = document.querySelectorAll('.cart__order__form input:required');
+const [firstName,lastName,address,city,email] = inputs;
 
 // create regular expression 
 const nameRegex = /^[a-zA-Zéèàùçûü\s]+[-a-zA-Zéèàùçûü\s]*$/;
@@ -111,122 +125,191 @@ const cityErrorMsg = 'le city doit contenir que les lettres';
 const addressErrorMsg = 'l\'adresse doit contenir que les lettres et les chiffres ';
 const emailErrorMsg = 'le format d\'une adresse mail n\'est pas conforme';
 
-// check if input is empty and render error msg 
-const emptyInputMsg = (inputValue,ErrorMsgNode) => {
-    if (inputValue === "") {
-        ErrorMsgNode.innerText = 'Veuillez renseigner ce champ';
-     }
-}
-
-// check input validity and render error msg if necessary
-const checkInputValidity = (inputValue,regExp,ErrorMsg,elementNode) => {
-
-    emptyInputMsg(inputValue,elementNode)
-
+// check if input value is valid
+const isInputValid = (inputValue,regExp) => {
     if( regExp.test(inputValue) === false && inputValue != "") {
-        elementNode.innerText = ErrorMsg; 
+        return false
     }
-
-    if(regExp.test(inputValue) && inputValue != ""){
-        elementNode.innerText = "";
+    if(regExp.test(inputValue) && inputValue != "" ){
+        return true
     }
 }
 
-// listen blur event to check input validity
-const changeInputHandler = e => {
-    const inputValue = e.currentTarget.value;
-    if(e.currentTarget.name === "firstName"){
-        checkInputValidity(inputValue,nameRegex,nameErrorMsg,firstNameErrorMsgEle);
+// render msg
+const renderMsg = (elementNode,Msg) => {
+    elementNode.innerText = Msg; 
+}
+
+// render msg for firstName input
+const firstNameHandler = (inputValue) => {
+    if(inputValue === ""){
+        renderMsg(firstNameErrorMsgEle,'Veuillez renseigner ce champ');
+    }else {
+        const isValid = isInputValid(inputValue,nameRegex);
+        isValid ? renderMsg(firstNameErrorMsgEle,"") : renderMsg(firstNameErrorMsgEle,nameErrorMsg);
     }
+}
 
-    if(e.currentTarget.name === "lastName"){
-        checkInputValidity(inputValue,nameRegex,nameErrorMsg,lastNameErrorMsgEle);
+// render msg for lastName input
+const lastNameHandler = (inputValue) => {
+    if(inputValue === ""){
+        renderMsg(lastNameErrorMsgEle,'Veuillez renseigner ce champ');
+    }else {
+        const isValid = isInputValid(inputValue,nameRegex);
+        isValid ? renderMsg(lastNameErrorMsgEle,"") : renderMsg(lastNameErrorMsgEle,nameErrorMsg);
     }
+}
 
-    if(e.currentTarget.name === "address"){
-        checkInputValidity(inputValue,addressRegex,addressErrorMsg,addressErrorMsgEle);
+// render msg for address input 
+const addressHandler = (inputValue) => {
+    if(inputValue === ""){
+        renderMsg(addressErrorMsgEle,'Veuillez renseigner ce champ');
+    }else {
+        const isValid = isInputValid(inputValue,addressRegex);
+        isValid ? renderMsg(addressErrorMsgEle,"") : renderMsg(addressErrorMsgEle,addressErrorMsg);
     }
+}
 
-    if(e.currentTarget.name === "city"){
-        checkInputValidity(inputValue,cityRegex,cityErrorMsg,cityErrorMsgEle);
+// render msg for city input 
+const cityHandler = (inputValue) => {
+    if(inputValue === ""){
+        renderMsg(cityErrorMsgEle,'Veuillez renseigner ce champ');
+    }else {
+        const isValid = isInputValid(inputValue,cityRegex);
+        isValid ? renderMsg(cityErrorMsgEle,"") : renderMsg(cityErrorMsgEle,cityErrorMsg);
     }
+}
 
-    if(e.currentTarget.name === "email"){
-        checkInputValidity(inputValue,emailRegex,emailErrorMsg,emailErrorMsgEle);
+// render msg for email input 
+const emailHandler = (inputValue) => {
+    if(inputValue === ""){
+        renderMsg(emailErrorMsgEle,'Veuillez renseigner ce champ');
+    }else {
+        const isValid = isInputValid(inputValue,emailRegex);
+        isValid ? renderMsg(emailErrorMsgEle,"") : renderMsg(emailErrorMsgEle,emailErrorMsg);
     }
-};
+}
 
-inputs.forEach( element => {
-    element.addEventListener('blur',changeInputHandler);
-})
+// get ordered product id (array)
+const getOrderProdutIds = () => {
+    return shoppingCart.cart.map( element => element.id );
+}
 
-// remove all space of input datas before sending to server
+// remove all space of input before sending to back-end
 const removeAllSpace = (inputValue) => {
     return inputValue.replace(/\s+/g,"")
 }
 
-// remove beginging sqace qnd end space of input datas before sending to server
+// remove beginging sqace qnd end space of input datas before sending to back-end
 const removeSpace = (inputValue) => {
     return inputValue.replace(/^\s+|\s+$/g,"")
 }
+// get body to send to back-end
+const getPostBody = () => {
+    // const contact = {
+    //     firstName: removeAllSpace(firstName.value),
+    //     lastName: removeAllSpace(lastName.value),
+    //     address: removeSpace(address.value),
+    //     city: removeAllSpace(city.value),
+    //     email: removeAllSpace(email.value)
+    // };
 
-// send form datas to back-end
-orderBtn.addEventListener('click', e => {
-     e.preventDefault();
-     const [firstName,lastName,address,city,email] = inputs;
+    const contact = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address:address.value,
+        city: city.value,
+        email:email.value
+    };
 
-     if(shoppingCart.cart.length === 0){
-         alert('votre panier est vide');
-     }else {
-        //  show error msg when inputs are empty
-        emptyInputMsg(firstName.value,firstNameErrorMsgEle);
-        emptyInputMsg(lastName.value,lastNameErrorMsgEle);
-        emptyInputMsg(address.value,addressErrorMsgEle);
-        emptyInputMsg(city.value,cityErrorMsgEle);
-        emptyInputMsg(email.value,emailErrorMsgEle);
+    const body = {
+        contact :contact,
+        products:getOrderProdutIds(),
+    };
+    return body
+}
 
-        //  send form datas to server when all inputs are valid
-        if(nameRegex.test(firstName.value) && 
+// send body to back-end and get orderID
+const fetchData = (requestOptions) => {
+    fetch('http://localhost:3000/api/products/order',requestOptions)
+    .then( response => response.json())
+    .then( data => {
+        // redirection to confirmation page
+        location.href = `confirmation.html?id=${data.orderId}`;
+        // clear localStorage
+        localStorage.clear();
+    })
+    .catch( error => alert(error));
+}
+
+//  check if all form inputs are valid 
+const isAllValid = () => {
+    if(nameRegex.test(firstName.value) && 
         nameRegex.test(lastName.value) &&
         addressRegex.test(address.value) && 
         cityRegex.test(city.value) && 
-        emailRegex.test(email.value)
-        ){ 
-        // get to-order product id
-        const productsIdArr = shoppingCart.cart.map( element => element.id );
+        emailRegex.test(email.value)) {
+        return true
+    }else{
+        return false
+    }
+}
 
-        // remove space of inputs values
-        const contact = {
-            firstName: removeAllSpace(firstName.value),
-            lastName: removeAllSpace(lastName.value),
-            address: removeSpace(address.value),
-            city: removeAllSpace(city.value),
-            email: removeAllSpace(email.value)
-        };
-
-        const body = {
-            contact :contact,
-            products:productsIdArr,
-        };
-
+// handle form inputs 
+const formHandler = () => {
+    const isTrue= isAllValid();
+    if(isTrue){
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
+            body: JSON.stringify(getPostBody())
         };
-
-        fetch('http://localhost:3000/api/products/order',requestOptions)
-        .then( response => response.json())
-        .then( data => {
-            // redirection to confirmation page
-            location.href = `confirmation.html?id=${data.orderId}`;
-            // clear localStorage
-            localStorage.clear();
-        })
-        .catch( error => alert(error));
-        }
+        fetchData(requestOptions);
+    }else{
+        firstNameHandler(firstName.value);
+        lastNameHandler(lastName.value);
+        addressHandler(address.value);
+        cityHandler(city.value);
+        emailHandler(email.value);
     }
+}
+
+// listen blur event of form inputs
+const changeInputListener = e => {
+    const inputValue = e.currentTarget.value;
+    if(e.currentTarget.name === "firstName"){
+        firstNameHandler(inputValue);
+    }
+    if(e.currentTarget.name === "lastName"){
+        lastNameHandler(inputValue);
+    }
+    if(e.currentTarget.name === "address"){
+        addressHandler(inputValue);
+    }
+    if(e.currentTarget.name === "city"){
+        cityHandler(inputValue);
+    }
+    if(e.currentTarget.name === "email"){
+        emailHandler(inputValue);
+    }
+};
+
+inputs.forEach( element => {
+    element.addEventListener('blur',changeInputListener);
 })
+
+// listen click event of orderBtn button
+const orderListener = e => {
+    e.preventDefault();
+    if(shoppingCart.cart.length === 0){
+        alert('votre panier est vide');
+    }else {
+       formHandler();
+   }
+}
+
+orderBtn.addEventListener('click',orderListener )
+
 
 
 
