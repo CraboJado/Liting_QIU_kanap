@@ -190,6 +190,14 @@ const emailHandler = (inputValue) => {
     }
 }
 
+const userInputsHandler = () => {
+    firstNameHandler(firstName.value);
+    lastNameHandler(lastName.value);
+    addressHandler(address.value);
+    cityHandler(city.value);
+    emailHandler(email.value);
+}
+
 // get ordered product id (array)
 const getOrderProdutIds = () => {
     return shoppingCart.cart.map( element => element.id );
@@ -247,14 +255,6 @@ const isAllValid = () => {
     }else{
         return false
     }
-}
-
-const userInputsHandler = () => {
-    firstNameHandler(firstName.value);
-    lastNameHandler(lastName.value);
-    addressHandler(address.value);
-    cityHandler(city.value);
-    emailHandler(email.value);
 }
 
 // listen blur event of form inputs
