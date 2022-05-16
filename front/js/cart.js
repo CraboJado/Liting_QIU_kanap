@@ -241,11 +241,8 @@ const fetchData = () => {
 
 //  check if all form inputs are valid 
 const isAllValid = () => {
-    if(nameRegex.test(firstName.value) && 
-        nameRegex.test(lastName.value) &&
-        addressRegex.test(address.value) && 
-        cityRegex.test(city.value) && 
-        emailRegex.test(email.value)) {
+    if(nameRegex.test(firstName.value) && nameRegex.test(lastName.value) &&
+        addressRegex.test(address.value) && cityRegex.test(city.value) && emailRegex.test(email.value)) {
         return true
     }else{
         return false
