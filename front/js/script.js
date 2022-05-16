@@ -3,30 +3,31 @@ const itemsElement = document.querySelector('#items');
 // render created elements on the page
 const renderPage = data => {
   data.forEach( product => {
-    const aElement = createElement('a');
-    const articleElement = createElement('article');
-    const imgElement = createElement('img');
-    const titleElement = createElement('h3');
-    const descElement = createElement('p');
-    insertElement(itemsElement,aElement);
-    appendElement(aElement,articleElement);
-    appendElement(articleElement,imgElement);
-    insertElement(articleElement,titleElement);
-    insertElement(articleElement,descElement);
+    const ancre = new HtmlElement("a");
+    const article = new HtmlElement("article");
+    const img = new HtmlElement("img");
+    const hTitle = new HtmlElement("h3");
+    const pDesc = new HtmlElement("p");
 
-    const href = new Attribute('href',`./product.html?id=${product._id}`);
-    const src = new Attribute('src',`${product.imageUrl}`);
-    const alt = new Attribute('alt',`Lorem ipsum dolor sit amet,${product.name}`);
-    const titleClassName = new Attribute('class','productName');
-    const descriptionClassName = new Attribute('class','productDescription');
-    href.setAttribute(aElement);
-    src.setAttribute(imgElement);
-    alt.setAttribute(imgElement);
-    titleClassName.setAttribute(titleElement);
-    descriptionClassName.setAttribute(descElement);
+    const titleClassName = getAttribute('class','productName');
+    const descriptionClassName = getAttribute('class','productDescription');
+    const imgSrc = getAttribute('src',`${product.imageUrl}`);
+    const imgAlt = getAttribute('alt',`Lorem ipsum dolor sit amet,${product.name}`);
+    const href = getAttribute('href',`./product.html?id=${product._id}`);
+    ancre.setAttribute(href);
+    img.setAttribute(imgSrc);
+    img.setAttribute(imgAlt);
+    hTitle.setAttribute(titleClassName);
+    pDesc.setAttribute(descriptionClassName);
 
-    setInnerText(titleElement,product.name);
-    setInnerText(descElement,product.description);
+    article.appendElement(ancre.element);
+    img.appendElement(article.element);
+    hTitle.appendElement(article.element);
+    pDesc.insertElement(article.element);
+    hTitle.setInnerText(product.name);
+    pDesc.setInnerText(product.description);
+
+    ancre.insertElement(itemsElement);
   })
 }
 
