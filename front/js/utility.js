@@ -1,26 +1,31 @@
-class Attribute {
-    constructor(name,value){
-      this.name = name;
-      this.value = value;
+class HtmlElement{
+    constructor(element){
+      this.element = document.createElement(element);
     }
-  
-    setAttribute(element) {
-      element.setAttribute(this.name,this.value);
+
+    setAttribute(attribute) {
+      this.element.setAttribute(attribute.name,attribute.value);
     }
+
+    insertElement (fartherNode) {
+      fartherNode.insertAdjacentElement('beforeend',this.element);
+    }
+
+    appendElement (fartherNode) {
+        console.log(this.element);
+      fartherNode.appendChild(this.element);
+    }
+
+    setInnerText (value) {
+      this.element.innerText = value;
+    }
+}
+
+// create html elemet attribute
+const getAttribute = (name,value) => {
+  return {
+      name : name,
+      value: value
   }
-  
-  const createElement = element => {
-    return document.createElement(element);
-  }
-  
-  const insertElement = (fartherNode, childNode) => {
-    fartherNode.insertAdjacentElement('beforeend',childNode);
-  }
-  
-  const appendElement = (fartherNode, childNode) => {
-    fartherNode.appendChild(childNode);
-  }
-  
-  const setInnerText =  (element,value) => {
-    element.innerText = value;
-  }
+}
+
