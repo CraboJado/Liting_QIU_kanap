@@ -1,10 +1,15 @@
 const imgContainer = document.querySelector(".item__img");
-const addToCartBtn = document.querySelector("#addToCart");
+const titleElement = document.querySelector("#title");
+const priceElement = document.querySelector("#price");
+const descripElement = document.querySelector("#description");
+const colorsElement = document.querySelector("#colors");
 const quantityElement = document.querySelector("#quantity");
+const addToCartBtn = document.querySelector("#addToCart");
+
 // get product id from current URL
 const id = window.location.href.split("?")[1].split("=")[1];
 
-// render img
+// creat and render img
 const renderImg = data => {
     const img = new HtmlElement('img');
     img.appendElement(imgContainer);
@@ -14,28 +19,14 @@ const renderImg = data => {
     img.setAttribute(imgAlt);
 }
 
-// render title
-const renderTitle = data => {
-    const titleElement = document.querySelector("#title");
-    titleElement.innerText = data.name;
+// set html element innerText
+const setInnerText = (element,data) => {
+    element.innerText = data;
 }
 
-// render price
-const renderPrice = data => {
-    const priceElement = document.querySelector("#price");
-    priceElement.innerText = data.price;
-}
-
-// render discription
-const renderDescription = data => {
-    const descripElement = document.querySelector("#description");
-    descripElement.innerText = data.description ; 
-}
-
-// render colorOption dropdown menu
+// create and render colorOption dropdown menu
 const renderColorOption = data => {
-    const colorsElement = document.querySelector("#colors");
-    for (i=0; i<data.colors.length; i++){
+    for (i = 0; i < data.colors.length; i++){
         const colorOption = new HtmlElement ('option');
         const optionValue = getAttribute('value',`${data.colors[i]}`);
         colorOption.setAttribute(optionValue);
@@ -46,15 +37,15 @@ const renderColorOption = data => {
 
 const renderPage = data => {
     renderImg(data);
-    renderTitle(data);
-    renderPrice(data);
-    renderDescription(data);
+    setInnerText(titleElement,data.name);
+    setInnerText(priceElement,data.price)
+    setInnerText(descripElement,data.description)
     renderColorOption(data);
 }
 
 // get seleted product
 const getSelectedProduct = id => {
-    const colorsElement = document.querySelector("#colors");
+    // const colorsElement = document.querySelector("#colors");
     const selectedColor = colorsElement.options[colorsElement.selectedIndex].value;
     const product = {
         id:id,
