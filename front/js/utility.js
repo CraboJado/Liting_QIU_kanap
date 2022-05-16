@@ -12,7 +12,6 @@ class HtmlElement{
     }
 
     appendElement (fartherNode) {
-        console.log(this.element);
       fartherNode.appendChild(this.element);
     }
 
