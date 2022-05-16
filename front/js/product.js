@@ -6,41 +6,41 @@ const id = window.location.href.split("?")[1].split("=")[1];
 
 // render img
 const renderImg = data => {
-    const img = createElement('img');
-    appendElement(imgContainer,img);
-    const src = new Attribute('src',`${data.imageUrl}`);
-    const alt = new Attribute('alt',`Photographie d'un canapé ${data.name}`);
-    src.setAttribute(img);
-    alt.setAttribute(img);
+    const img = new HtmlElement('img');
+    img.appendElement(imgContainer);
+    const imgSrc = getAttribute('src',`${data.imageUrl}`);
+    const imgAlt = getAttribute('alt',`Photographie d'un canapé ${data.name}`);
+    img.setAttribute(imgSrc);
+    img.setAttribute(imgAlt);
 }
 
 // render title
 const renderTitle = data => {
     const titleElement = document.querySelector("#title");
-    setInnerText(titleElement,data.name);
+    titleElement.innerText = data.name;
 }
 
 // render price
 const renderPrice = data => {
     const priceElement = document.querySelector("#price");
-    setInnerText(priceElement ,data.price);
+    priceElement.innerText = data.price;
 }
 
 // render discription
 const renderDescription = data => {
     const descripElement = document.querySelector("#description");
-    setInnerText(descripElement,data.description);
+    descripElement.innerText = data.description ; 
 }
 
 // render colorOption dropdown menu
 const renderColorOption = data => {
     const colorsElement = document.querySelector("#colors");
     for (i=0; i<data.colors.length; i++){
-        const colorOption = createElement('option');
-        const optionValue = new Attribute('value',`${data.colors[i]}`);
-        optionValue.setAttribute(colorOption);
-        insertElement(colorsElement,colorOption);
-        setInnerText(colorOption ,data.colors[i]);
+        const colorOption = new HtmlElement ('option');
+        const optionValue = getAttribute('value',`${data.colors[i]}`);
+        colorOption.setAttribute(optionValue);
+        colorOption.insertElement(colorsElement);
+        colorOption.setInnerText(data.colors[i]);
     }
 }
 
