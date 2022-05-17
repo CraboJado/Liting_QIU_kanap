@@ -17,7 +17,7 @@ class ShoppingCart {
             
         if(isSameProduct) {
             const newShoppingCart = this.cart.map( element => {
-                if (element.id === product.id && element.color === product.color) {
+                if (element.id === product.id && element.color === product.color ) {
                     return {...element,quantity: element.quantity + product.quantity}
                 }
                 return element;
@@ -48,8 +48,8 @@ class ShoppingCart {
     }
 
     getTotalQuantity(){
-        let TotalQuantity = this.cart.reduce( (accumulateur,valeurCourante) => {
-            return accumulateur + valeurCourante.quantity
+        let TotalQuantity = this.cart.reduce( (previousValue,currentValue) => {
+            return previousValue + currentValue.quantity
         },0);
 
         return TotalQuantity;
@@ -57,10 +57,8 @@ class ShoppingCart {
 
     getTotalPrice(productData){
         let sum = 0;
-        this.cart.forEach(element => {
-            const selectProduct = productData.find( (product)=> {
-                return product._id === element.id
-            });
+        this.cart.forEach( element => {
+            const selectProduct = productData.find( product => product._id === element.id );
             sum += element.quantity * selectProduct.price;    
         });
         return sum;
