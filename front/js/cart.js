@@ -1,8 +1,10 @@
 const cartItemsElement = document.querySelector('#cart__items'); 
-const productData = JSON.parse(localStorage.getItem("productData"));
+const totalQuantityEle = document.querySelector('#totalQuantity');
+const totalPriceEle = document.querySelector('#totalPrice');
+const productData = JSON.parse(localStorage.getItem("productData")); 
 const shoppingCart = new ShoppingCart();
 
-// get html element article string integreted with shoppingcart datas
+// get html element article string integreted with shoppingcart item's datas
 const getArticleHtmlString = (shoppingCart,productData) => {
     let articleHtmlString ="";
     shoppingCart.cart.forEach( element => {
@@ -35,75 +37,102 @@ const getArticleHtmlString = (shoppingCart,productData) => {
 }
 
 // render shopping cart items on the page
-const renderShoppingCart = () => {
+const renderShoppingCart = (productData) => {
     const articleHtmlString = getArticleHtmlString(shoppingCart,productData);
     cartItemsElement.insertAdjacentHTML('beforeEnd',articleHtmlString);
 }
 
 // render total quantity of shopping cart items on the page
 const renderTotalQty = () => {
-    const totalQuantityEle = document.querySelector('#totalQuantity');
     const quantity = shoppingCart.getTotalQuantity(); 
     totalQuantityEle.innerText = quantity;
 }
 
 // render total price of shopping cart items on the page
-const renderTotalPrice = () => {
-    const totalPriceEle = document.querySelector('#totalPrice');
+const renderTotalPrice = (productData) => {
     const sum = shoppingCart.getTotalPrice(productData);
     totalPriceEle.innerText = sum;
 }
 
-// listen click event of delete buttons (deleteItem)
-const deleteProductListener = e => {
-    const id = e.currentTarget.closest(".cart__item").dataset.id;
-    const color = e.currentTarget.closest(".cart__item").dataset.color;
-    const product = {
-        id:id,
-        color:color
-    };
+// handle change event of qty input
+const changeInputHandler = (productData) =>{
+    const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
+    itemQuantityInputs.forEach ( input => {
+        input.addEventListener('change', e => {
+            const id = e.currentTarget.closest(".cart__item").dataset.id;
+            const color = e.currentTarget.closest(".cart__item").dataset.color;
+            const product = {
+                id:id,
+                color:color,
+                quantity: + e.currentTarget.value
+            };
+        
+            if(product.quantity > 100){
+                alert("la quantité maximum d'un produit est 100");
+                e.currentTarget.value = 100;
+                product.quantity = 100;
+            }
 
-    shoppingCart.delete(product);
-    cartItemsElement.removeChild(e.currentTarget.closest(".cart__item"));
-    renderTotalQty();
-    renderTotalPrice();
+            shoppingCart.update(product);
+            renderTotalQty();
+            renderTotalPrice(productData);
+        });
+    });
 }
 
-// listen change event of quantity inputs (itemQuantity)
-const changeQuantityListener = e => {
-    const id = e.currentTarget.closest(".cart__item").dataset.id;
-    const color = e.currentTarget.closest(".cart__item").dataset.color;
-    const product = {
-        id:id,
-        color:color,
-        quantity: + e.currentTarget.value
-    };
-
-    if(product.quantity > 100){
-        alert("la quantité maximum d'un produit est 100");
-        e.currentTarget.value = 100;
-        product.quantity = 100;
-    }
-
-    shoppingCart.update(product);
-    renderTotalQty();
-    renderTotalPrice();
+// handle click event of delete button
+const deleteProductHandler = (productData) => {
+    const delectItemBtns = document.querySelectorAll('.deleteItem');
+    delectItemBtns.forEach ( delectItemBtn => {
+        delectItemBtn.addEventListener('click', e => {
+            const id = e.currentTarget.closest(".cart__item").dataset.id;
+            const color = e.currentTarget.closest(".cart__item").dataset.color;
+            const product = {
+                id:id,
+                color:color
+            };
+        
+            shoppingCart.delete(product);
+            cartItemsElement.removeChild(e.currentTarget.closest(".cart__item"));
+            renderTotalQty();
+            renderTotalPrice(productData);
+        });
+    });
 }
 
-renderShoppingCart();
-renderTotalQty();
-renderTotalPrice();
+const renderPage = (productData) => {
+    renderShoppingCart(productData);
+    renderTotalQty();
+    renderTotalPrice(productData);
+    deleteProductHandler(productData);
+    changeInputHandler(productData);
+}
 
-const itemQuantityInputs = document.querySelectorAll('.itemQuantity');
-const delectItemBtns = document.querySelectorAll('.deleteItem');
-delectItemBtns.forEach ( delectItemBtn => {
-    delectItemBtn.addEventListener('click',deleteProductListener);
-});
-itemQuantityInputs.forEach ( input => {
-    input.addEventListener('change',changeQuantityListener);
-});
+const fetchProductData = () => {
+    fetch('http://localhost:3000/api/products')
+    .then( response => response.json() )
+    .then( data => {
+        renderPage(data);
+    })
+    .catch( error => {cartItemsElement.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';});
+}
 
-// form vadility
+// before rendering page, check if any item's quantity is over 100 ( maximum per product is 100)
+const isOverMaxQuantity = shoppingCart.cart.some( element => element.quantity > 100 );
+if (isOverMaxQuantity) {
+    const newShoppingCart = shoppingCart.cart.map( element => {
+         return element.quantity > 100 ? {...element,quantity:100} : element;
+    })
+    // save newShoppingCart datas in localstorage
+    shoppingCart.save(newShoppingCart);
+}
+
+// if productData in LocalStorage is null, need to fetch data to render page , otherwise render page directely
+productData === null ? fetchProductData() : renderPage(productData);
+
+/********************************************************************************/
+/********************************* form vadility *******************************/ 
+/*******************************************************************************/
 const orderBtn = document.querySelector('.cart__order__form input[type="submit"]');
 const firstNameErrorMsgEle = document.querySelector('#firstNameErrorMsg');
 const lastNameErrorMsgEle = document.querySelector('#lastNameErrorMsg');
@@ -122,17 +151,13 @@ const emailRegex = /^[0-9a-z._-\s]+[+0-9a-z._-]*@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,
 // create error message
 const nameErrorMsg = 'le prénom doit commencer et finir par une letter et doit contenir au moins 2 lettres et un seul - pour le prénom composé';
 const cityErrorMsg = 'le city doit contenir que les lettres';
-const addressErrorMsg = 'l\'adresse doit contenir que les lettres et les chiffres ';
+const addressErrorMsg = 'l\'adresse doit contenir que les lettres, les chiffres et le virgule';
 const emailErrorMsg = 'le format d\'une adresse mail n\'est pas conforme';
 
 // check if input value is valid
 const isInputValid = (inputValue,regExp) => {
-    if( regExp.test(inputValue) === false && inputValue != "") {
-        return false
-    }
-    if(regExp.test(inputValue) && inputValue != "" ){
-        return true
-    }
+    if(regExp.test(inputValue) && inputValue != "" )  return true ;
+    if(regExp.test(inputValue) === false && inputValue != "")  return false ;
 }
 
 // render msg
@@ -215,8 +240,8 @@ const removeSpace = (inputValue) => {
 // get body to send to back-end
 const getPostBody = () => {
     const contact = {
-        firstName: removeAllSpace(firstName.value),
-        lastName: removeAllSpace(lastName.value),
+        firstName: removeSpace(firstName.value), 
+        lastName: removeSpace(lastName.value), 
         address: removeSpace(address.value),
         city: removeAllSpace(city.value),
         email: removeAllSpace(email.value)
@@ -291,7 +316,7 @@ const orderListener = e => {
    }
 }
 
-orderBtn.addEventListener('click',orderListener)
+orderBtn.addEventListener('click',orderListener);
 
 
 
