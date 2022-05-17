@@ -114,7 +114,7 @@ const fetchProductData = () => {
     .then( data => {
         renderPage(data);
     })
-    .catch( error => {cartItemsElement.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';});
+    .catch( error => {cartItemsElement.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochaine fois';});
 }
 
 // before rendering page, check if any item's quantity is over 100 ( maximum per product is 100)

@@ -79,7 +79,7 @@ const fetchDataById = (id) => {
         renderPage(data);
         addToCartBtn.addEventListener('click', () => addToCart())
     })
-    .catch( error => {imgContainer.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';})
+    .catch( error => {imgContainer.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochaine fois';})
 };
 
 fetchDataById(id);
