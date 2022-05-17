@@ -32,7 +32,7 @@ const renderPage = data => {
 }
 
 // fetch data 
-const fetchProdutData = () => {
+const fetchProductData = () => {
     fetch('http://localhost:3000/api/products')
     .then( response => response.json() )
     .then( data => {
@@ -44,7 +44,7 @@ const fetchProdutData = () => {
     .catch( error => {itemsElement.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochain fois';});
 }
 
-fetchProdutData();
+fetchProductData();
 
 
 
