@@ -233,7 +233,7 @@ const removeAllSpace = (inputValue) => {
     return inputValue.replace(/\s+/g,"")
 }
 
-// remove beginging sqace qnd end space of input datas before sending to back-end
+// remove beginging sqace and end space of input datas before sending to back-end
 const removeSpace = (inputValue) => {
     return inputValue.replace(/^\s+|\s+$/g,"")
 }
