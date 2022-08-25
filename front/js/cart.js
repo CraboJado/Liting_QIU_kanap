@@ -230,12 +230,12 @@ const getOrderProdutIds = () => {
 
 // remove all space of input before sending to back-end
 const removeAllSpace = (inputValue) => {
-    return inputValue.replace(/\s+/g,"")
+    return inputValue.replace(/\s*/g,"")
 }
 
 // remove beginging sqace and end space of input datas before sending to back-end
 const removeSpace = (inputValue) => {
-    return inputValue.replace(/^\s+|\s+$/g,"")
+    return inputValue.replace(/^\s*|\s*$/g,"")
 }
 // get body to send to back-end
 const getPostBody = () => {
