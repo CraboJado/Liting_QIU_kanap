@@ -12,6 +12,7 @@ lequel l'utilisateur a cliqué depuis la page d’accueil. Depuis cette page, l�
 peut sélectionner une quantité, une couleur, et ajouter le produit à son panier.
 
 3. Une page “panier”. Celle-ci contient plusieurs parties :
+
     Un résumé des produits dans le panier, le prix total et la possibilité de
 modifier la quantité d’un produit sélectionné ou bien de supprimer celui-ci.
 
