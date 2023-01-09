@@ -1,15 +1,28 @@
 # Kanap #
+Projet réalisé pendant la formation chez l'Openclassrooms :
 
-This is the front end and back end server for Project 5 of the Web Developer path.
+Construisez un site e-commerce en JavaScript vallia ( partie front-end )
 
-### Back end Prerequisites ###
+L’application web est composée de 4 pages :
+    ● Une page d’accueil montrant (de manière dynamique) tous les articles disponibles à la vente.
+    ● Une page “produit” qui affiche (de manière dynamique) les détails du produit sur lequel l'utilisateur a cliqué depuis la page d’accueil. Depuis cette page, l’utilisateur peut sélectionner une quantité, une couleur, et ajouter le produit à son panier.
+    ● Une page “panier”. Celle-ci contient plusieurs parties :
+        ○ Un résumé des produits dans le panier, le prix total et la possibilité de modifier la quantité d’un produit sélectionné ou bien de supprimer celui-ci.
+        ○ Un formulaire permettant de passer une commande. Les données du formulaire sont validés avant d'être renvoyées au back-end. Par exemple, pas de chiffre dans un champ prénom.
+    ● Une page “confirmation” :
+        ○ Un message de confirmation de commande, remerciant l'utilisateur pour sa commande, et indiquant l'identifiant de commande envoyé par l’API.
 
-You will need to have Node and `npm` installed locally on your machine.
+## tech stack ## : JavaScript vallia, fetch , localstorage
 
-### Back end Installation ###
+### Lancement de l'application ###
 
-Clone this repo. From the "back" folder of the project, run `npm install`. You 
-can then run the server with `node server`. 
-The server should run on `localhost` with default port `3000`. If the
-server runs on another port for any reason, this is printed to the
-console when the server starts, e.g. `Listening on port 3001`.
+## Back end Installation ##
+
+run `npm install` depuis le dossier "back"
+run `node server` pour lancer le server backend
+le server est sur port `3000` par défault
+
+## Frontend ##
+Lance la page index.html dans un navigateur avec live Server (vscode)
+
+
