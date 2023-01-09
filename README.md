@@ -30,8 +30,8 @@ tech stack: JavaScript vanilla, fetch , localstorage
 
 ## Back end Installation ##
 
-run `npm install` depuis le dossier "back"
-run `node server` pour lancer le server backend
+run `npm install` depuis le dossier "back", 
+run `node server` pour lancer le server backend, 
 le server est sur port `3000` par défault
 
 ## Frontend ##
