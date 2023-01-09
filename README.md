@@ -24,9 +24,9 @@ back-end. Par exemple, pas de chiffre dans un champ prénom.
 Un message de confirmation de commande, remerciant l'utilisateur pour sa
 commande, et indiquant l'identifiant de commande envoyé par l’API.
 
-## tech stack ## : JavaScript vanilla, fetch , localstorage
+tech stack: JavaScript vanilla, fetch , localstorage
 
-### Lancement de l'application ###
+## Lancement de l'application ##
 
 ## Back end Installation ##
 
