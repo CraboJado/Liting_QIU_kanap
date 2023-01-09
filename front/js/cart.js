@@ -143,7 +143,8 @@ const inputs = document.querySelectorAll('.cart__order__form input:required');
 const [firstName,lastName,address,city,email] = inputs;
 
 // create regular expression 
-const nameRegex = /^[a-zA-Zéèàùçûü\s]+[-a-zA-Zéèàùçûü\s]*$/;
+// const nameRegex = /^[a-zA-Zéèàùçûü\s]+[-a-zA-Zéèàùçûü\s]*$/;
+const nameRegex = /^[a-zA-Zéèàùçûü]+[-a-zA-Zéèàùçûü]*$/
 const cityRegex = /^[a-zA-Zéèàùçûü\s]+$/;
 const addressRegex = /^[a-zA-Z0-9éèàùçûü\s-,]+$/;
 const emailRegex = /^[0-9a-z._-\s]+[+0-9a-z._-]*@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}\s*$/; 
