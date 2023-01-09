@@ -1,40 +1,40 @@
-# Kanap #
-Projet réalisé pendant la formation chez l'Openclassrooms :
+# Project 5 - Kanap
+implemented individually during training program in Openclassrooms.
+> Build an e-commerce Website with JavaScript vanilla (only front-end).
 
-Construisez un site e-commerce en JavaScript vallia ( partie front-end )
+## Features
+* A home page showing (dynamically) all items available for sale.
+* A “product” page that (dynamically) displays product details on
+which the user clicked from the home page. From this page, the user
+can select a quantity, a color, and add the product to their basket.
+* A “shopping car” page. This contains several parts:
+    * A summary of the products in the car 
+    * the total price, the possibility to modify the quantity of a selected product 
+    * delete a selected product
+    * A form for placing an order. The form datas are validated before sending to the backend. 
+    For example, no number in a first name field.
+* A “confirmation” page including:
+    * An order confirmation message thanking the user for his order
+    * and indicating the order identifier sent by the API.
 
-## L’application web sera composée de 4 pages :
-1. Une page d’accueil montrant (de manière dynamique) tous les articles disponibles à 
-la vente.
+## Tech Stacks ( frontend )
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![javascript](https://img.shields.io/badge/Javascript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
 
-2. Une page “produit” qui affiche (de manière dynamique) les détails du produit sur
-lequel l'utilisateur a cliqué depuis la page d’accueil. Depuis cette page, l’utilisateur
-peut sélectionner une quantité, une couleur, et ajouter le produit à son panier.
+## Installation
 
-3. Une page “panier”. Celle-ci contient plusieurs parties :
+#### Kanap Back-End
+You will need to have Node and `npm` installed locally on your machine.
 
-    Un résumé des produits dans le panier, le prix total et la possibilité de
-modifier la quantité d’un produit sélectionné ou bien de supprimer celui-ci.
+Install all the dependencies with npm.\
+Open the `back` directory in terminal :
+```bash
+npm install
+```
+run `node server` pour lancer le server backend,
 
-    Un formulaire permettant de passer une commande. Les données du
-formulaire sont validés avant d'être renvoyées au
-back-end. Par exemple, pas de chiffre dans un champ prénom.
-
-4. Une page “confirmation” :
-Un message de confirmation de commande, remerciant l'utilisateur pour sa
-commande, et indiquant l'identifiant de commande envoyé par l’API.
-
-tech stack: JavaScript vanilla, fetch , localstorage
-
-## Lancement de l'application ##
-
-## Back end Installation ##
-
-run `npm install` depuis le dossier "back", 
-run `node server` pour lancer le server backend, 
-le server est sur port `3000` par défault
-
-## Frontend ##
-Lance la page index.html dans un navigateur avec live Server (vscode)
+#### Kanap Front-End
+Launch the index.html page in a browser with live Server (vscode)
 
 
