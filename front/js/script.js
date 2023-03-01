@@ -41,7 +41,10 @@ const fetchProductData = () => {
         // save product data in LocalStorage
         localStorage.setItem('productData',JSON.stringify(data));
     })
-    .catch( error => {itemsElement.innerText = error + ': le chargement de la page a rencontré un problème, veuillez re-essayer une prochaine fois';});
+    .catch( error => { 
+      console.log(error)
+      itemsElement.innerText = 'le chargement de la page a rencontré un problème, veuillez re-essayer une prochaine fois';
+    });
 }
 
 fetchProductData();
